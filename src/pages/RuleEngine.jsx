@@ -85,6 +85,25 @@ const RuleEngine = () => {
         });
         setRuleGroups(updateLogicalGroup);
     }
+
+    // const removeLogicalBlockInGroup = (groupIndex, blockIndex) => {
+    //     const updatedBlocks = ruleGroups?.map
+    // }
+    const removeLogicalBlockInGroup = (groupIndex, blockIndex) => {
+        const updatedRuleGroups = ruleGroups.map((group, gIndex) => {
+            if (gIndex === groupIndex) {
+                const updatedLogicBlocks = group.logicBlocks.filter((block, bIndex) => bIndex !== blockIndex);
+                return {
+                    ...group,
+                    logicBlocks: updatedLogicBlocks,
+                };
+            }
+            return group;
+        });
+        setRuleGroups(updatedRuleGroups);
+    };
+    
+
     
     const renderRuleGroup = (index) => (
         <>
@@ -261,7 +280,7 @@ const RuleEngine = () => {
                         </Form.Item>
                     </Col>
                 </Row>
-                <Row align="right">
+                {/* <Row align="right">
                     <Button shape='round'
                         icon={<DeleteOutlined />}
                         danger
@@ -269,6 +288,17 @@ const RuleEngine = () => {
                             removeLogicalBlock(groupIndex, blockIndex);
                         }} 
                     />
+                </Row> */}
+                <Row justify="end">
+                    <Button shape='round'
+                        icon={<DeleteOutlined />}
+                        type='primary'
+                        style={{ marginRight: 10 }}
+                        danger
+                        size='small'
+                        onClick={() => {
+                            removeLogicalBlockInGroup(groupIndex, blockIndex);
+                        }} />
                 </Row>
             </div>
         );
@@ -277,7 +307,7 @@ const RuleEngine = () => {
     const renderLogicBlock = (index) => (
         <div key={index} style={{ padding: '10px', backgroundColor: 'white', borderRadius: '10px', marginBottom: '10px', border: '1px solid #ccc' }}>
             <Row>
-                <Col span={8}>
+                <Col span={6}>
                     <Form.Item
                         name={`factName-${index}`}
                         onChange={(e) => {
@@ -293,7 +323,7 @@ const RuleEngine = () => {
                         <Input className="borderedSelect" bordered={false} style={{ width: "96%" }} />
                     </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                     <Form.Item
                         name={`operator-${index}`}
                         label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Operator</span>}>
@@ -332,7 +362,7 @@ const RuleEngine = () => {
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                     <Form.Item
                         name={`dataType-${index}`}
                         label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Data Types</span>}>
@@ -358,7 +388,7 @@ const RuleEngine = () => {
                         </Select>
                     </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col span={6}>
                     <Form.Item
                         name={`value-${index}`}
                         onChange={(e) => {
@@ -375,10 +405,13 @@ const RuleEngine = () => {
                     </Form.Item>
                 </Col>
             </Row>
-            <Row align="right">
+            <Row justify="end">
                 <Button shape='round'
                     icon={<DeleteOutlined />}
+                    type='primary'
+                    style={{marginRight: 10}}
                     danger
+                    size='small'
                     onClick={() => {
                         removeLogicalBlock(index);
                     }} />
