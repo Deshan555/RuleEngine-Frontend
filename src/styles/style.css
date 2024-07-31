@@ -1,0 +1,282 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.table-striped-rows tr:nth-child(2n) td {
+    background-color: #ffffff;
+}
+.table-striped-rows thead {
+    background-color: #ffffff;
+}
+
+body {
+    background-color: #fafafa;
+    /* font-family: 'Poppins', sans-serif; */
+}
+/* 
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', sans-serif;
+} */
+
+.textStyle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: gray;
+}
+
+.descriptionStyle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: black;
+}
+
+.textStyleChild {
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 450;
+    line-height: 1;
+    color: black;
+}
+
+.textStyleChilds {
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 550;
+    line-height: 1;
+}
+
+.headingStyle {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.5;
+    color: black;
+}
+
+.headingStyle-sub {
+    font-family: 'Poppins', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: black;
+}
+
+.headingStyle2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.5;
+    color: black;
+}
+
+.textStyle2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.textStyle3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.textStyle-small {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.textStyles-small {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.custom-select .ant-select-selector {
+    border-radius: 10px; /* Adjust the value as needed */
+}
+
+.textStyle-charts-header {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+    font-weight: bold;
+}
+
+.textStyles-smallx {
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ant design date picker font change */
+.ant-picker-input > input {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.my-select-container .ant-select .ant-select-selector {
+    border-radius:20px;
+  }
+  .borderedSelect {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.0;
+
+    &:hover {
+      border-color: #356796 !important;
+      border-top-color: rgb(53, 103, 150);
+      border-right-color: rgb(53, 103, 150);
+      border-bottom-color: rgb(53, 103, 150);
+      border-left-color: rgb(53, 103, 150);
+    }
+}
+
+.borderedSelect {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 1.0;
+  
+    &:hover {
+      border-color: #356796 !important;
+      border-top-color: rgb(53, 103, 150);
+      border-right-color: rgb(53, 103, 150);
+      border-bottom-color: rgb(53, 103, 150);
+      border-left-color: rgb(53, 103, 150);
+    }
+  }
+  
+  /* Target the selected option font size */
+  .ant-select-selection-item {
+    font-size: 12px !important;
+  }
+  
+  .ant-select-item-option-content {
+    font-size: 12px !important;
+  }
+  
+
+.customDropdown {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    width: 250px;
+    height: 30px;
+}
+
+.customInput {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    width: 250px;
+}
+
+.ant-select-selection-selected-value {
+    font-size: 16px; /* Adjust the font size as needed */
+}
+
+.secondary-button {
+    width: 120px;
+    height: 35px;
+    border-radius: 5px;
+    border-color: black;
+}
+
+.primary-button-design {
+    margin-left: 10px;
+    width: 120px;
+    height: 35px;
+    border-radius: 5px;
+    border-color: #1890ff;
+    background-color: white;
+    color: #1890ff;
+}    
+
+.danger-button {
+    margin-left: 10px;
+    width: 120px;
+    height: 35px;
+    border-radius: 5px;
+    background-color: white;
+    border-color: red;
+}    
+
+.card-new {
+    width: 90px;
+    height: 90px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.icon-new {
+    font-size: 20px;
+    margin-bottom: 10px;
+} 
+
+.my-select-container .ant-select .ant-select-selector {
+    border-radius:20px;
+  }
+  .borderedSelect {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+
+    &:hover {
+      border-color: #356796 !important;
+      border-top-color: rgb(53, 103, 150);
+      border-right-color: rgb(53, 103, 150);
+      border-bottom-color: rgb(53, 103, 150);
+      border-left-color: rgb(53, 103, 150);
+    }
+}
+
+.customDropdown {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    width: 250px;
+    height: 'auto';
+}
+
+.customInput {
+    border-radius: 8px !important;
+    background-color: white;
+    border: 1px solid darkgray;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+    width: 250px;
+}
