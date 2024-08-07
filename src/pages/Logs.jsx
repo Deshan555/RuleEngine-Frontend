@@ -184,7 +184,7 @@ const checkUniqueness = (expressionId) => {
                 )
               }
               {
-                logicalBlock.length > 0 && (
+                facts.length > 0 && (
                   <Button type="primary"
                     icon={<MailOutlined />}
                     onClick={() => {
@@ -199,7 +199,6 @@ const checkUniqueness = (expressionId) => {
                 )
               }
             </Row>
-
       <Row>
         {
           facts.map((fact) => (
