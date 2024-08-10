@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Table, Button, Form, Select, Input, DatePicker, TimePicker, Row, Col, Modal, message, Collapse, Timeline, Segmented } from 'antd';
-import { DeleteOutlined, CommentOutlined, MessageOutlined, MailOutlined, WechatWorkOutlined, AppstoreOutlined, BarsOutlined, CodeOutlined } from '@ant-design/icons';
+import { DeleteOutlined, CommentOutlined, MessageOutlined, MailOutlined, WechatWorkOutlined, AppstoreOutlined, BarsOutlined, CodeOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import '../styles/style.css';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -33,11 +33,27 @@ const Logs = () => {
   ];
 
   const defineRules = (value) => {
-    setLogicalBlock([...logicalBlock, {
-      id: uuidv4(),
-      type: value,
-      rules: []
-    }]); 
+    // setLogicalBlock([...logicalBlock, {
+    //   id: uuidv4(),
+    //   type: value,
+    //   rules: []
+    // }]); 
+
+    let groupId = value.groupId;
+    let expression = {
+      fact: value.factName,
+      operator: value.operator,
+      value: value.value
+    };
+    
+    let conditionBlock = conditionBlocks.map((block) => { 
+      if(block.id === groupId) {
+        block.conditions.push(expression);
+      }
+      return block;
+    })
+
+    setConditionBlocks(conditionBlock);
   }
 
 const operatorRecognizer = (operator) => {
@@ -108,6 +124,11 @@ const checkUniqueness = (expressionId) => {
   return logicalBlock.some(block => block.type.connectWith === expressionId);
 }
 
+const removeFacts = (factName) => {
+  const newFacts = facts.filter(fact => fact.factName !== factName);
+  setFacts(newFacts);
+}
+
 // [{"id":"d8ccabf9-4e23-43b3-a128-0dfce497a8e0","type":{"groupId":"b1ad03c4-0447-4cb7-9c32-c64115207ac4","factName":"humidity","operator":"equal","value":"36"},"rules":[]},{"id":"12b09ac8-d854-42af-9955-6c38b73661e4","type":{"groupId":"b1ad03c4-0447-4cb7-9c32-c64115207ac4","factName":"temperature","operator":"notEqual","value":"36","connection":"and","connectWith":"d8ccabf9-4e23-43b3-a128-0dfce497a8e0"},"rules":[]},{"id":"ce7d5192-972a-4b61-844a-bbafc0e483e0","type":{"groupId":"b1ad03c4-0447-4cb7-9c32-c64115207ac4","factName":"temperature","operator":"equal","value":"36","connection":"and","connectWith":"12b09ac8-d854-42af-9955-6c38b73661e4"},"rules":[]}]
 
 
@@ -152,17 +173,20 @@ const checkUniqueness = (expressionId) => {
         {JSON.stringify(conditionBlocks, null, 2)}
       </pre> */}
 
+<pre>
+        {JSON.stringify(logicalBlock, null, 2)}
+      </pre>
       {
         selectedView === '1' && (
           <>
             <Row>
               <Button type="primary"
-                icon={<CommentOutlined />}
+                icon={<PlusCircleOutlined />}
                 onClick={() => {
                   setOpenModal(true);
                   setInputType('FACTS');
                 }}
-                style={{ margin: '10px', backgroundColor: '#5F6F65', borderColor: '#5F6F65' }}>
+                style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
                 <span
                   className='textStyle'
                   style={{ fontSize: '12px', color: 'white' }}> New Fact </span>
@@ -199,10 +223,13 @@ const checkUniqueness = (expressionId) => {
                 )
               }
             </Row>
+            <pre>
+              {JSON.stringify(conditionBlocks, null, 2)}
+            </pre>
       <Row>
         {
           facts.map((fact) => (
-            <div style={{ padding: '10px', backgroundColor: '#F5EDED', borderRadius: '10px', width: 180, margin: 5 }}>
+            <div style={{ padding: '10px', backgroundColor: '#F7F6DC', borderRadius: '10px', width: 180, margin: 5 }}>
               <Row>
                 <Col span={20}>
                   <span className="textStyleChild" style={{ fontSize: '13px' }}>{fact.factName}</span>
@@ -210,7 +237,7 @@ const checkUniqueness = (expressionId) => {
                   <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>{fact.dataType}</span>
                 </Col>
                 <Col span={4}>
-                  <Button type="primary" icon={<DeleteOutlined />} danger />
+                  <Button type="primary" icon={<DeleteOutlined />} danger onClick={() => removeFacts(fact.factName)} />
                 </Col>
               </Row>
             </div>
@@ -303,14 +330,15 @@ const checkUniqueness = (expressionId) => {
                   setConditionBlocks([...conditionBlocks, {
                     id: uuidv4(),
                     name: values.conditionName,
-                    description: values.discription,
+                    rootConnector: values.rootConnector,
+                    rightConnector: values.rightConnector,
+                    conditions: []
                   }]);
                 }}
               >
                     <Form.Item
                       name='conditionName'
                       required={true}
-                      // must be unique
                       rules={[
                         { required: true, message: 'Please input condition block name!' },
                         {
@@ -324,13 +352,45 @@ const checkUniqueness = (expressionId) => {
                       label={<span className="textStyleChild" style={{ fontSize: '12px', width: '96%' }}>Condition Block Name</span>}>
                       <Input style={{ width: '100%' }} />
                     </Form.Item>
-
-                    <Form.Item
-                      name='discription'
-                      label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Description</span>}>
-                      <Input style={{ width: '100%' }} />
+                    <Row>
+                      <Col span={12}>
+                      <Form.Item
+                      name='rootConnector'
+                      label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Root Level Connector</span>}>
+                      <Select
+                        className="borderedSelect"
+                        bordered={false}
+                        style={{ fontSize: '12px', width: "98%" }}
+                      >
+                        <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="and">
+                          AND
+                        </Select.Option>
+                        <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="or">
+                          OR
+                        </Select.Option>
+                      </Select>
                     </Form.Item>
+                      </Col>
 
+                      <Col span={12}>
+                      <Form.Item
+                      name='rightConnector'
+                      label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Right Side Connector</span>}>
+                      <Select
+                        className="borderedSelect"
+                        bordered={false}
+                        style={{ fontSize: '12px', width: "98%" }}
+                      >
+                        <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="and">
+                          AND
+                        </Select.Option>
+                        <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="or">
+                          OR
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                      </Col>
+                    </Row>
                 <Row justify="end">
                   <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: 120, backgroundColor: '#C9DABF', borderColor: '#C9DABF' }}>
@@ -424,8 +484,7 @@ const checkUniqueness = (expressionId) => {
                       <Input className="borderedSelect" bordered={false} style={{ width: "100%", height: 32 }} />
                     </Form.Item>
                   
-                  {/* connection logic */}
-                  {
+                  {/* {
                     logicalBlock?.length > 0 ? (
                       <>
                      
@@ -469,7 +528,7 @@ const checkUniqueness = (expressionId) => {
                           </Form.Item>
                       </>
                     ) : null
-                  }
+                  } */}
                 
                 <Row justify="end">
                   <Form.Item>
