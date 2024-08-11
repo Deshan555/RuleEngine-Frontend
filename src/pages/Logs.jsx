@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Form, Select, Input, DatePicker, TimePicker, Row, Col, Modal, message, Collapse, Timeline, Segmented } from 'antd';
+import { Badge, Table, Button, Form, Select, Input, DatePicker, TimePicker, Row, Col, Modal, message, Collapse, Timeline, Segmented } from 'antd';
 import { DeleteOutlined, CommentOutlined, MessageOutlined, MailOutlined, WechatWorkOutlined, AppstoreOutlined, BarsOutlined, CodeOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import '../styles/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -21,6 +21,13 @@ const Logs = () => {
   const [selectedConditionBlock, setSelectedConditionBlock] = React.useState(null);
   const [selectedView, setSelectedView] = React.useState('1');
 
+  const [rootLvlConditionBlock, setRootLvlConditionBlock] = React.useState([]);
+
+  const [selectedBlockID, setSelectedBlockID] = React.useState(null);
+  const [selectedSubBlockId, setSelectedSubBlockId] = React.useState(null);
+
+  const priority = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
   const dataTypes = [
     { value: 'string', label: 'String' },
     { value: 'number', label: 'Number' },
@@ -33,27 +40,43 @@ const Logs = () => {
   ];
 
   const defineRules = (value) => {
-    // setLogicalBlock([...logicalBlock, {
-    //   id: uuidv4(),
-    //   type: value,
-    //   rules: []
-    // }]); 
-
-    let groupId = value.groupId;
+    let groupId = selectedSubBlockId?.groupID;
+    let subGroupID = selectedSubBlockId?.subBlockID;
     let expression = {
+      id: uuidv4(),
       fact: value.factName,
       operator: value.operator,
       value: value.value
     };
-    
-    let conditionBlock = conditionBlocks.map((block) => { 
-      if(block.id === groupId) {
-        block.conditions.push(expression);
+    const topLvl = rootLvlConditionBlock.map((block) => {
+      if (block.id === groupId) {
+        block.groups.map((group) => {
+          if (group.id === subGroupID) {
+            group.conditions.push(expression);
+          }
+        });
       }
       return block;
-    })
+    });
 
-    setConditionBlocks(conditionBlock);
+    setRootLvlConditionBlock(topLvl);
+  }
+
+  const groupBilnder = (value) => {
+    const groupJson = {
+      id: uuidv4(),
+      rootConnector: value.rootConnector,
+      rightConnector: value.rightConnector,
+      conditions: []
+    }
+    let groupId = selectedBlockID;
+    const topLvl = rootLvlConditionBlock.map((block) => {
+      if (block.id === groupId) {
+        block.groups.push(groupJson);
+      }
+      return block;
+    });
+    setRootLvlConditionBlock(topLvl);
   }
 
 const operatorRecognizer = (operator) => {
@@ -84,41 +107,103 @@ const conditionDefiner = (conditionBlockId) => {
   }
 }
 
-const conditionItems = conditionBlocks.map((conditionBlock) => ({
+const conditionItems = rootLvlConditionBlock.map((conditionBlock) => ({
   key: conditionBlock.id,
   label: (
     <span className="textStyleChild" style={{ fontSize: '12px' }}>
-      {conditionBlock.name} - {conditionBlock.description} -  {logicalBlock.length > 0 ? generateExpression(logicalBlock) : ''}
+      {conditionBlock.name} - {conditionBlock.priority ? `${conditionBlock.priority}% Priority` : 'Default Priority'}
     </span>
   ),
   children: <div>
-{
-  logicalBlock.map((block) => (
-    block.type.groupId === conditionBlock.id && (
-      <div style={{ padding: '10px', backgroundColor: '#F5EDED', borderRadius: '10px', width: 180, margin: 5 }} key={block.id}>
-        <Row>
-          <Col span={20}>
-            <span className="textStyleChild" style={{ fontSize: '13px' }}>{block.type.factName}</span>
-            <br />
-            <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>
-              {block.type.operator} {block.type.value}
-            </span>
-          </Col>
-          <Col span={4}>
-            <Button type="primary" icon={<DeleteOutlined />} danger />
-          </Col>
-        </Row>
+    <Row justify="end">
+      <Button
+      size='small'
+        type="primary"
+        icon={<PlusCircleOutlined />}
+        onClick={() => {
+          setOpenModal(true);
+          setSelectedBlockID(conditionBlock.id);
+          setInputType('CONDITIONS');
+        }}
+        style={{ margin: '10px', backgroundColor: '#06D001', borderColor: '#06D001' }}
+      >
+        <span className='textStyle' style={{ fontSize: '10px', color: 'white' }}>
+          Group
+        </span>
+      </Button>
+    </Row>
 
-        <pre>
-          {conditionDefiner(block.type.groupId).name}
-        </pre>
-      </div>
-    )
-  ))
-}
+    {
+      rootLvlConditionBlock.map((block) => (
+        block.id === conditionBlock.id && (
+          block.groups.map((group) => (
+            <div style={{ padding: '10px', backgroundColor: '#F5EDED', borderRadius: '10px', width: '100%', margin: 5 }} key={group.id}>
+              <span className="textStyleChild" style={{ fontSize: '13px' }}>{group.id}</span>
+              <Button type="primary"
+              shape='circle'
+                    icon={<PlusCircleOutlined />}
+                    onClick={() => {
+                      setOpenModal(true);
+                      setInputType('RULES');
+                      setSelectedSubBlockId({
+                        groupID: conditionBlock.id,
+                        subBlockID: group.id,
+                      })
+                    }}
+                    style={{ margin: '10px', backgroundColor: '#5F6F65', borderColor: '#5F6F65' }} />
+                    {
+                      group.conditions.map((condition) => (
+                        <div style={{ padding: '10px', backgroundColor: '#F7F6DC', borderRadius: '10px', width: 180, margin: 5 }} key={condition.id}>
+                          <Row>
+                            <Col span={20}>
+                              <span className="textStyleChild" style={{ fontSize: '13px' }}>{condition.fact}</span>
+                              <br />
+                              <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>{condition.operator} {condition.value}</span>
+                            </Col>
+                            <Col span={4}>
+                              <Button type="primary" icon={<DeleteOutlined />} danger onClick={() => {}} />
+                            </Col>
+                          </Row>
+                        </div>
+                      ))
+                    }
+            </div>
+          ))
+        )
+      ))
+    }
   </div>
 }));
 
+  const factsItems = [
+    {
+      key: '1',
+      label: (
+        <>
+          <span className="textStyleChild" style={{ fontSize: '12px' }}>Facts</span>
+          <Badge count={facts.length} style={{ backgroundColor: '#00b4d8', marginLeft: 5 }} />
+        </>
+      ),
+      children: (
+        <Row>
+          {facts.map((fact) => (
+            <div style={{ padding: '10px', backgroundColor: '#F7F6DC', borderRadius: '10px', width: 180, margin: 5 }} key={fact.factName}>
+              <Row>
+                <Col span={20}>
+                  <span className="textStyleChild" style={{ fontSize: '13px' }}>{fact.factName}</span>
+                  <br />
+                  <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>{fact.dataType}</span>
+                </Col>
+                <Col span={4}>
+                  <Button type="primary" icon={<DeleteOutlined />} danger />
+                </Col>
+              </Row>
+            </div>
+          ))}
+        </Row>
+      )
+    }
+  ];
 const checkUniqueness = (expressionId) => {
   console.log(logicalBlock.some(block => block.type.connectWith === expressionId));
   return logicalBlock.some(block => block.type.connectWith === expressionId);
@@ -161,21 +246,6 @@ const removeFacts = (factName) => {
           ]}
         />
 
-      {/* <pre>
-        {JSON.stringify(facts, null)}
-      </pre>
-
-      <pre>
-        {JSON.stringify(logicalBlock, null, 2)}
-      </pre>
-
-      <pre>
-        {JSON.stringify(conditionBlocks, null, 2)}
-      </pre> */}
-
-<pre>
-        {JSON.stringify(logicalBlock, null, 2)}
-      </pre>
       {
         selectedView === '1' && (
           <>
@@ -189,10 +259,22 @@ const removeFacts = (factName) => {
                 style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
                 <span
                   className='textStyle'
-                  style={{ fontSize: '12px', color: 'white' }}> New Fact </span>
+                  style={{ fontSize: '12px', color: 'white' }}>New Fact</span>
               </Button>
 
-              {
+              <Button type="primary"
+                icon={<PlusCircleOutlined />}
+                onClick={() => {
+                  setOpenModal(true);
+                  setInputType('CONDITION_BLOCK');
+                }}
+                style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
+                <span
+                  className='textStyle'
+                  style={{ fontSize: '12px', color: 'white' }}>Condition Block</span>
+              </Button>
+
+              {/* {
                 facts.length > 0 && (
                   <Button type="primary"
                     icon={<MessageOutlined />}
@@ -206,8 +288,8 @@ const removeFacts = (factName) => {
                       style={{ fontSize: '12px', color: 'white' }}> New Condition </span>
                   </Button>
                 )
-              }
-              {
+              } */}
+              {/* {
                 facts.length > 0 && (
                   <Button type="primary"
                     icon={<MailOutlined />}
@@ -221,29 +303,12 @@ const removeFacts = (factName) => {
                       style={{ fontSize: '12px', color: 'white' }}> New Rule </span>
                   </Button>
                 )
-              }
+              } */}
             </Row>
-            <pre>
-              {JSON.stringify(conditionBlocks, null, 2)}
-            </pre>
-      <Row>
-        {
-          facts.map((fact) => (
-            <div style={{ padding: '10px', backgroundColor: '#F7F6DC', borderRadius: '10px', width: 180, margin: 5 }}>
-              <Row>
-                <Col span={20}>
-                  <span className="textStyleChild" style={{ fontSize: '13px' }}>{fact.factName}</span>
-                  <br />
-                  <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>{fact.dataType}</span>
-                </Col>
-                <Col span={4}>
-                  <Button type="primary" icon={<DeleteOutlined />} danger onClick={() => removeFacts(fact.factName)} />
-                </Col>
-              </Row>
-            </div>
-          ))
-        }
-      </Row>
+  
+
+
+      <Collapse ghost items={factsItems} />
 
       <Collapse defaultActiveKey={['1']} ghost items={conditionItems} />
           </>
@@ -253,7 +318,7 @@ const removeFacts = (factName) => {
       {
         selectedView === '2' && (
           <>
-            <JsonView src={logicalBlock} />
+            <JsonView src={rootLvlConditionBlock} />
           </>
         )
       }
@@ -309,7 +374,7 @@ const removeFacts = (factName) => {
 
                 <Row justify="end">
                   <Form.Item>
-                    <Button type="primary" htmlType="submit" style={{ width: 120, backgroundColor: '#C9DABF', borderColor: '#C9DABF' }}>
+                    <Button type="primary" htmlType="submit" style={{ width: 120, backgroundColor: '#00b4d8', borderColor: '#00b4d8' }}>
                       <span className='textStyle' style={{ fontSize: '12px', color: 'white' }}>Add Fact</span>
                     </Button>
                     <Button type="primary" danger style={{ width: 120, marginLeft: 5 }} onClick={() => setOpenModal(false)}>
@@ -326,14 +391,17 @@ const removeFacts = (factName) => {
             <div>
               <Form
                 layout="vertical"
+                // onFinish={(values) => {
+                //   setConditionBlocks([...conditionBlocks, {
+                //     id: uuidv4(),
+                //     name: values.conditionName,
+                //     rootConnector: values.rootConnector,
+                //     rightConnector: values.rightConnector,
+                //     conditions: []
+                //   }]);
+                // }}
                 onFinish={(values) => {
-                  setConditionBlocks([...conditionBlocks, {
-                    id: uuidv4(),
-                    name: values.conditionName,
-                    rootConnector: values.rootConnector,
-                    rightConnector: values.rightConnector,
-                    conditions: []
-                  }]);
+                  groupBilnder(values);
                 }}
               >
                     <Form.Item
@@ -398,6 +466,129 @@ const removeFacts = (factName) => {
                     </Button>
                   </Form.Item>
                 </Row>
+              </Form>
+            </div>
+          )
+        }
+
+        {
+          inputType === 'CONDITION_BLOCK' && (
+            <div>
+              <Form
+                layout="vertical"
+                onFinish={(values) => {
+                  setRootLvlConditionBlock([...rootLvlConditionBlock, {
+                    id: uuidv4(),
+                    name: values.conditionName,
+                    priority: values.priority,
+                    rootConnector: values.rootConnector,
+                    action: [],
+                    groups: []
+                  }]);
+                }}
+              >
+                <Row>
+                  <Col span={12}>
+                  <Form.Item
+                  name='conditionName'
+                  required={true}
+                  rules={[
+                    { required: true, message: 'Please input condition block name!' },
+                    {
+                      validator: (_, value) => {
+                        return conditionBlocks.some(block => block.name === value)
+                          ? Promise.reject(new Error('Condition block name must be unique!'))
+                          : Promise.resolve();
+                      }
+                    }
+                  ]}
+                  label={<span className="textStyleChild" style={{ fontSize: '12px', width: '96%' }}>Condition Block Name</span>}>
+                  <Input style={{ width: '98%' }} />
+                </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                  <Form.Item
+                  name='priority'
+                  label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Priority</span>}>
+                                    <Select
+                    className="borderedSelect"
+                    bordered={false}
+                    style={{ fontSize: '12px', width: "98%" }}
+                  >
+                    {
+                      priority.map((p) => (
+                        <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value={p}>
+                          {p}% Priority
+                        </Select.Option>
+                      ))
+                    }
+                  </Select>
+                </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                  <Form.Item
+                  name='rootConnector'
+                  label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Root Level Connector</span>}>
+                  <Select
+                    className="borderedSelect"
+                    bordered={false}
+                    style={{ fontSize: '12px', width: "98%" }}
+                  >
+                    <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="and">
+                      AND
+                    </Select.Option>
+                    <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="or">
+                      OR
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                  <Form.Item
+                    name='action'
+                    label={<span className="textStyleChild" style={{ fontSize: '12px' }}>Action</span>}>
+                    <Select
+                      className="borderedSelect"
+                      bordered={false}
+                      style={{ fontSize: '12px', width: "98%" }}
+                    >
+                      <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="email">
+                        Email
+                      </Select.Option>
+                      <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="sms">
+                        SMS
+                      </Select.Option>
+                      <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="fcm">
+                        FCM
+                      </Select.Option>
+                      <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="pushbullet">
+                        Pushbullet
+                      </Select.Option>
+                      <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="log">
+                        Log
+                      </Select.Option>
+                      <Select.Option className="textStyleChild" style={{ fontSize: '12px' }} value="api">
+                        API
+                      </Select.Option>
+                    </Select>
+                  </Form.Item> 
+                  </Col>
+                </Row>
+                
+                <Row justify="end">
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit" style={{ width: 120, backgroundColor: '#00b4d8', borderColor: '#00b4d8' }}>
+                      <span className='textStyle' style={{ fontSize: '12px', color: 'white' }}>Add Condition</span>
+                    </Button>
+                    <Button type="primary" danger style={{ width: 120, marginLeft: 5 }} onClick={() => setOpenModal(false)}>
+                      <span className='textStyle' style={{ fontSize: '12px', color: 'white' }}>Close</span>
+                    </Button>
+                  </Form.Item>
+                </Row>
+
               </Form>
             </div>
           )
