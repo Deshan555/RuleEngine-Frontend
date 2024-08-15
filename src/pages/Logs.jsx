@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Badge, Table, Button, Form, Select, Input, DatePicker, TimePicker, Row, Col, Modal, message, Collapse, Timeline, Segmented } from 'antd';
+import { Badge, Table, Button, Form, Select, Input, DatePicker, TimePicker, Row, Col, Modal, message, Collapse, Timeline, Segmented, Card, Breadcrumb } from 'antd';
 import { DeleteOutlined, CommentOutlined, MessageOutlined, MailOutlined, WechatWorkOutlined, AppstoreOutlined, BarsOutlined, CodeOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import '../styles/style.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -137,37 +137,67 @@ const conditionItems = rootLvlConditionBlock.map((conditionBlock) => ({
       rootLvlConditionBlock.map((block) => (
         block.id === conditionBlock.id && (
           block.groups.map((group) => (
-            <div style={{ padding: '10px', backgroundColor: '#F5EDED', borderRadius: '10px', width: '100%', margin: 5 }} key={group.id}>
-              <span className="textStyleChild" style={{ fontSize: '13px' }}>{group.id}</span>
-              <Button type="primary"
-              shape='circle'
-                    icon={<PlusCircleOutlined />}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setInputType('RULES');
-                      setSelectedSubBlockId({
-                        groupID: conditionBlock.id,
-                        subBlockID: group.id,
-                      })
-                    }}
-                    style={{ margin: '10px', backgroundColor: '#5F6F65', borderColor: '#5F6F65' }} />
-                    {
-                      group.conditions.map((condition) => (
-                        <div style={{ padding: '10px', backgroundColor: '#F7F6DC', borderRadius: '10px', width: 180, margin: 5 }} key={condition.id}>
-                          <Row>
-                            <Col span={20}>
-                              <span className="textStyleChild" style={{ fontSize: '13px' }}>{condition.fact}</span>
-                              <br />
-                              <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>{condition.operator} {condition.value}</span>
-                            </Col>
-                            <Col span={4}>
-                              <Button type="primary" icon={<DeleteOutlined />} danger onClick={() => {}} />
-                            </Col>
-                          </Row>
-                        </div>
-                      ))
-                    }
-            </div>
+            // <div style={{ padding: '10px', backgroundColor: '#F5EDED', borderRadius: '10px', width: '100%', margin: 5 }} key={group.id}>
+            //   <span className="textStyleChild" style={{ fontSize: '13px' }}>{group.id}</span>
+            //   <Button type="primary"
+            //   shape='circle'
+            //         icon={<PlusCircleOutlined />}
+            //         onClick={() => {
+            //           setOpenModal(true);
+            //           setInputType('RULES');
+            //           setSelectedSubBlockId({
+            //             groupID: conditionBlock.id,
+            //             subBlockID: group.id,
+            //           })
+            //         }}
+            //         style={{ margin: '10px', backgroundColor: '#5F6F65', borderColor: '#5F6F65' }} />
+            //         <Row>
+            //         {
+            //           group.conditions.map((condition) => (
+            //             <div style={{ padding: '10px', backgroundColor: '#F7F6DC', borderRadius: '10px', width: 180, margin: 5 }} key={condition.id}>
+            //               <Row>
+            //                 <Col span={20}>
+            //                   <span className="textStyleChild" style={{ fontSize: '13px' }}>{condition.fact}</span>
+            //                   <br />
+            //                   <span className="textStyleChild" style={{ fontSize: '12px', color: '#5F6F65' }}>{condition.operator} {condition.value}</span>
+            //                 </Col>
+            //                 <Col span={4}>
+            //                   <Button type="primary" icon={<DeleteOutlined />} danger onClick={() => {}} />
+            //                 </Col>
+            //               </Row>
+            //             </div>
+            //           ))
+            //         }
+            //         </Row>
+            // </div>
+
+            <Card
+              size="small"
+              title={<span className="textStyleChild" style={{ fontSize: '11px' }}>{group.id}</span>}
+              extra={<Button type="primary"
+                size='small'
+                icon={<PlusCircleOutlined size='small' />}
+                onClick={() => {
+                  setOpenModal(true);
+                  setInputType('RULES');
+                  setSelectedSubBlockId({
+                    groupID: conditionBlock.id,
+                    subBlockID: group.id,
+                  })
+                }}
+                style={{ margin: '10px', backgroundColor: '#06D001', borderColor: '#06D001' }} >
+                  <span className='textStyle' style={{ fontSize: '10px', color: 'white' }}> Condition </span>
+                </Button>
+                  }
+              style={{
+                width: '49%',
+              }}
+            >
+              <p>Card content</p>
+              <p>Card content</p>
+              <p>Card content</p>
+            </Card>
+
           ))
         )
       ))
@@ -219,102 +249,80 @@ const removeFacts = (factName) => {
 
 
   return (
-    <div style={{ padding: '0 15px', backgroundColor: 'white', borderRadius: '10px' }}>
-      <h1>Logs</h1>
-      <p>Logs page content</p>
+    <div>
+      <span className='textStyleChild' style={{fontSize: 16}}>Labotory</span>
+      <Breadcrumb
+        separator="/"
+      >
+        <Breadcrumb.Item><span className="textStyleChild" style={{ fontSize: '12px' }}>Home</span></Breadcrumb.Item>
+        <Breadcrumb.Item><span className="textStyleChild" style={{ fontSize: '12px' }}>Logs</span></Breadcrumb.Item>
+      </Breadcrumb>
 
-      <Segmented
-          onChange={(value) => {setSelectedView(value);
-            console.log(value);
-          }}
-          options={[
-            {
-              label: <span className="textStyleChild" style={{ fontSize: '12px' }}>Designer</span>,
-              value: '1',
-              icon: <BarsOutlined />,
-            },
-            {
-              label: <span className="textStyleChild" style={{ fontSize: '12px' }}>Source</span>,
-              value: '2',
-              icon: <AppstoreOutlined />,
-            },
-            {
-              label: <span className="textStyleChild" style={{ fontSize: '12px' }}>Timeline</span>,
-              value: '3',
-              icon: <CodeOutlined />,
-            },
-          ]}
-        />
+      
+      <div style={{backgroundColor: 'white', padding: 10, borderRadius: 10, marginTop: 10}}>
+      <Row>
+        <Col span={12}>
+          <Button type="primary"
+            icon={<PlusCircleOutlined />}
+            onClick={() => {
+              setOpenModal(true);
+              setInputType('FACTS');
+            }}
+            style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
+            <span
+              className='textStyle'
+              style={{ fontSize: '12px', color: 'white' }}>New Fact</span>
+          </Button>
 
+          <Button type="primary"
+            icon={<PlusCircleOutlined />}
+            onClick={() => {
+              setOpenModal(true);
+              setInputType('CONDITION_BLOCK');
+            }}
+            style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
+            <span
+              className='textStyle'
+              style={{ fontSize: '12px', color: 'white' }}>Condition Block</span>
+          </Button>
+        </Col>
+
+        <Col span={12}>
+          <Segmented
+            onChange={(value) => {
+              setSelectedView(value);
+              console.log(value);
+            }}
+            options={[
+              {
+                label: <span className="textStyleChild" style={{ fontSize: '12px' }}>Designer</span>,
+                value: '1',
+                icon: <BarsOutlined />,
+              },
+              {
+                label: <span className="textStyleChild" style={{ fontSize: '12px' }}>Source</span>,
+                value: '2',
+                icon: <AppstoreOutlined />,
+              },
+              {
+                label: <span className="textStyleChild" style={{ fontSize: '12px' }}>Timeline</span>,
+                value: '3',
+                icon: <CodeOutlined />,
+              },
+            ]}
+          />
+        </Col>
+      </Row>
+
+      
       {
         selectedView === '1' && (
           <>
-            <Row>
-              <Button type="primary"
-                icon={<PlusCircleOutlined />}
-                onClick={() => {
-                  setOpenModal(true);
-                  setInputType('FACTS');
-                }}
-                style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
-                <span
-                  className='textStyle'
-                  style={{ fontSize: '12px', color: 'white' }}>New Fact</span>
-              </Button>
-
-              <Button type="primary"
-                icon={<PlusCircleOutlined />}
-                onClick={() => {
-                  setOpenModal(true);
-                  setInputType('CONDITION_BLOCK');
-                }}
-                style={{ margin: '10px', backgroundColor: '#0466c8', borderColor: '#0466c8' }}>
-                <span
-                  className='textStyle'
-                  style={{ fontSize: '12px', color: 'white' }}>Condition Block</span>
-              </Button>
-
-              {/* {
-                facts.length > 0 && (
-                  <Button type="primary"
-                    icon={<MessageOutlined />}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setInputType('CONDITIONS');
-                    }}
-                    style={{ margin: '10px', backgroundColor: '#5F6F65', borderColor: '#5F6F65' }}>
-                    <span
-                      className='textStyle'
-                      style={{ fontSize: '12px', color: 'white' }}> New Condition </span>
-                  </Button>
-                )
-              } */}
-              {/* {
-                facts.length > 0 && (
-                  <Button type="primary"
-                    icon={<MailOutlined />}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setInputType('RULES');
-                    }}
-                    style={{ margin: '10px', backgroundColor: '#5F6F65', borderColor: '#5F6F65' }}>
-                    <span
-                      className='textStyle'
-                      style={{ fontSize: '12px', color: 'white' }}> New Rule </span>
-                  </Button>
-                )
-              } */}
-            </Row>
-  
-
-
-      <Collapse ghost items={factsItems} />
-
-      <Collapse defaultActiveKey={['1']} ghost items={conditionItems} />
+            <Collapse ghost items={factsItems} />
+            <Collapse defaultActiveKey={['1']} ghost={false} items={conditionItems} />
           </>
         )
       }
-
       {
         selectedView === '2' && (
           <>
@@ -322,6 +330,11 @@ const removeFacts = (factName) => {
           </>
         )
       }
+      </div>
+  
+
+
+
 
       <Modal title={<span className="textStyle" style={{ fontSize: '16px' }}>Add New {inputType.toLocaleLowerCase()}</span>}
         visible={openModal}
